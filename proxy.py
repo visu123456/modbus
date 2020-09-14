@@ -8,18 +8,21 @@ import threading
 import json
 import requests
 from pprint import pprint
+import datetime
 
 class RuleNotFound(Exception):
     pass
 
+#open log file
+logfile = open('log.txt','w',buffering=1)
 
 # Check if the first line of rules.csv contains space characters
 with open ('rules.csv',newline='') as csvfile:
     firstline=csv.reader(csvfile,delimiter=',', quotechar='"')
     for word in firstline:
         if ' ' in word:
-            print('The rules.csv should not contain space characters',file=sys.stderr)
-            print('There is a space character at:',word,file=sys.stderr)
+            print('The rules.csv should not contain space characters')
+            print('There is a space character at:',word)
             sys.exit()
 
 rules=[]
@@ -31,59 +34,43 @@ with open ('rules.csv',newline='') as csvfile:
 
 class MyServer(BaseHTTPRequestHandler):
     protocol_version='HTTP/1.1'
-  
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.send_header('access-control-allow-origin', '*')
-        self.send_header('access-control-allow-headers', 'content-type')
-        self.send_header("Content-Length", 0)                
-        self.end_headers()
-        self.wfile.write(''.encode('utf-8'))        
-        return
-
     def do_POST(self):
+        print('===BEGIN REQUEST ',end='',file=logfile)
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),file=logfile)
         keys=('First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth')
         request_length = int(self.headers['content-length'])
         r=''
         response_length=0
         result=''
         if not self.headers['content-type']:
-            self.send_response(400) 
-            self.send_header("Content-type", "text/plain")            
-            r=json.dumps('Content-Type header is missing')            
-            self.send_header("Content-Length", len(r))
-            self.end_headers()
-
-            self.wfile.write(r.encode('utf-8'))
+            print('Content-Type header is missing',file=logfile)
+            self.finish()
+            self.connection.close()
+            print('END REQUEST===\n',file=logfile)
             return
         elif self.headers['content-type'] != 'application/json':
-            self.send_response(400)
-            self.send_header("Content-type", "text/plain")            
-            r=json.dumps('Content-Type should be application/json')
-            self.send_header("Content-Length", len(r))
-            self.end_headers()
-            self.wfile.write(r.encode('utf-8'))
+            print('Content-Type should be application/json',file=logfile)
+            self.finish()
+            self.connection.close()
+            print('END REQUEST===\n',file=logfile)            
             return
         pd0=self.rfile.read(request_length)
         pd1=''
         try:
             pd1= pd0.decode('utf-8')
         except:
-            r=json.dumps('Unicode Decoding Error1')
-            self.send_header("Content-Length", len(r))
-            self.end_headers()
-            self.send_response(400)
-            self.wfile.write(r.encode('utf-8'))
+            print('Unicode Decoding Error',file=logfile)
+            self.finish()
+            self.connection.close()
+            print('END REQUEST===\n',file=logfile)            
             return
         try:
             loaded = json.loads(pd1)
         except json.decoder.JSONDecodeError:
-            self.send_response(400)            
-            r=json.dumps('JSON Parsing Error')
-            self.send_header("Content-Length", len(r))
-            self.end_headers()
-            self.wfile.write(r.encode('utf-8'))
+            print('JSON Parsing Error',file=logfile)
+            self.finish()
+            self.connection.close()
+            print('END REQUEST===\n',file=logfile)
             return
         try:
             current={}
@@ -116,36 +103,29 @@ class MyServer(BaseHTTPRequestHandler):
                 print(s.headers)
                 print(s.reason)
         except RuleNotFound as e:
-            self.send_response(406)            
-            r=json.dumps('None of the rules in rules.csv match with the current json. Discarding the current json')
-            self.send_header("Content-Length", len(r))
-            self.end_headers()
-            self.wfile.write(r.encode('utf-8'))
+            print('None of the rules in rules.csv match with the current json. Discarding the current json',file=logfile)
+            self.finish()
+            self.connection.close()
+            print('END REQUEST===\n',file=logfile)            
             return
             
         except Exception as e:
-            self.send_response(500)            
-            r=json.dumps(e.__class__.__name__)
-            self.send_header("Content-Length", len(r))
-            self.end_headers()
-            self.wfile.write(r.encode('utf-8'))
+            print('500, internal error',file=logfile)
+            self.finish()
+            self.connection.close()
+            print('END REQUEST===\n',file=logfile)
             return
-        self.send_response(200)
-        e='Post request sent to http://172.104.176.90:8086/write?db=mydb\n'
-        self.send_header("Content-type", "text/plain")
-        self.send_header("Content-Length", len(e))                
-        self.end_headers()
-        self.wfile.write(e.encode('utf-8'))            
+        print('Post request submitted successfully to http://localhost:8086/write?db=mydb\n',file=logfile)
+        self.finish()
+        self.connection.close()
+        print('END REQUEST===\n',file=logfile)        
         return
-
     
     def do_GET(self):
-        self.send_response(405)        
-        self.send_header("Content-type", "text/html")
-        r = json.dumps('GET Method not allowed.  Allowed methods: OPTIONS, POST')
-        self.send_header("Content-Length", len(r))        
-        self.end_headers()
-        self.wfile.write(r.encode('utf-8'))
+        print('GET Method not allowed.  Allowed methods: POST',file=logfile)
+        self.finish()
+        self.connection.close()
+        print('END REQUEST===\n',file=logfile)        
         return
         
 class ThreadingSimpleServer(ThreadingMixIn,HTTPServer):
