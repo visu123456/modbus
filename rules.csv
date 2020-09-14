@@ -1,0 +1,12 @@
+DeviceID,SlaveID,ParameterName,ParameterAddress,ParameterDataFormat
+862927043952366,1,Voltage,960,16_LittelEndian
+862927043952366,1,Current,962,32_LittleEndian
+862927043952366,1,Freq,966,32_Float
+862927043952366,2,Voltage,960,16_LittelEndian
+862927043952366,2,Current,962,32_LittleEndian
+862927043952366,2,Freq,966,32_Float
+862927043952366,3,Voltage,960,16_LittelEndian
+862927043952366,3,Current,962,32_LittleEndian
+862927043952366,3,Freq,966,32_Float
+862927043952369,1,Voltage,960,16_LittelEndian
+862927043952370,1,Voltage,960,16_LittelEndian
