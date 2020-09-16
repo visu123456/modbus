@@ -76,7 +76,7 @@ class MyServer(BaseHTTPRequestHandler):
             current={}
             for d in loaded['DATA']:
                 current['DeviceID']=loaded['IM']
-                current['ParamaterName']=d[0]                
+                current['ParameterName']=d[0]                
                 current['SlaveID']=d[1]
                 current['ParameterAddress']=d[3]
                 matched=False
