@@ -81,10 +81,12 @@ class MyServer(BaseHTTPRequestHandler):
                 current['ParamaterAddress']=d[3]
                 matched=False
                 for r in rules:
+                    print('The rule is:',r)
                     if current == r:
                         matched=True
                         break
                 if not matched:
+                    print('But the json contains:',current)
                     raise RuleNotFound
                 result =  d[4]
                 result_array=[]
