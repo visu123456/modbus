@@ -78,7 +78,7 @@ class MyServer(BaseHTTPRequestHandler):
                 current['DeviceID']=loaded['IM']
                 current['ParamaterName']=d[0]                
                 current['SlaveID']=d[1]
-                current['ParamaterAddress']=d[3]
+                current['ParameterAddress']=d[3]
                 matched=False
                 for r in rules:
                     print('The rule is:',r)
