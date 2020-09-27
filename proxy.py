@@ -80,11 +80,17 @@ class MyServer(BaseHTTPRequestHandler):
                 current['SlaveID']=d[1]
                 current['ParameterAddress']=d[3]
                 matched=False
-                for r in rules:
-                    print('The rule is:',r)
-                    if current == r:
-                        matched=True
+#                 ----------------------------------------------------------------------------------------------
+                all_match=True
+                for r in range(len(rules)):
+                    all_match=True
+                    print('The rule is:',rules[r])
+                    if current[r] ==rules[r]:
+                        continue
+                    else:
+                        all_match=False
                         break
+#                         ----------------------------------------------------------------------------------------------------
                 if not matched:
                     print('But the json contains:',current)
                     raise RuleNotFound
