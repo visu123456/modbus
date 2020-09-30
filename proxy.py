@@ -26,7 +26,7 @@ with open ('rules.csv',newline='') as csvfile:
             sys.exit()
 
 rules=[]
-# Read the whole rules.csv again
+# Read the whole rules.csv again ok
 with open ('rules.csv',newline='') as csvfile:
     lines=csv.DictReader(csvfile,delimiter=',', quotechar='"')
     for line in lines:
