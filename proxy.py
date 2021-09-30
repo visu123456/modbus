@@ -26,12 +26,16 @@ with open ('rules.csv',newline='') as csvfile:
             sys.exit()
 
 rules=[]
+main_data = []
 # Read the whole rules.csv again
 with open ('rules.csv',newline='') as csvfile:
     lines=csv.DictReader(csvfile,delimiter=',', quotechar='"')
     for line in lines:
         rules.append(line)
-
+        main_data.append(line)
+        
+        
+        
 class MyServer(BaseHTTPRequestHandler):
     protocol_version='HTTP/1.1'
     def do_POST(self):
