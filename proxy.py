@@ -24,6 +24,15 @@ with open ('rules.csv',newline='') as csvfile:
             print('The rules.csv should not contain space characters')
             print('There is a space character at:',word)
             sys.exit()
+        else:
+            if ' ' in word:
+            print('The rules.csv should not contain space characters')
+            print('There is a space character at:',word)
+            sys.exit()
+            else:
+                print('this is not suupoted')
+                print('please try again:',word)
+                sys.exit()
 
 rules=[]
 main_data = []
