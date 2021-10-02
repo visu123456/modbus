@@ -94,15 +94,7 @@ class MyServer(BaseHTTPRequestHandler):
                 current['ParameterAddress']=d[3]
                 
 #                 ----------------------------------------------------------------------------------------------
-                matched=True
-                for r in range(len(rules)):
-                    matched=True
-                    print('The rule is:',rules[r])
-                    if current[r] ==rules[r]:
-                        continue
-                    else:
-                        matched=False
-                        break
+             
 #                         ----------------------------------------------------------------------------------------------------
                 if matched:
                     print('But the json contains:',current)
